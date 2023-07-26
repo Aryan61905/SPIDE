@@ -6,7 +6,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 import time
 
-def RosterUpdate():
+def RosterFetchAPI():
     Tier1Map = {}
     team_url = 'https://www.nba.com/teams'
     response_team = requests.get(team_url)
