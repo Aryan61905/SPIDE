@@ -12,24 +12,25 @@ def RosterFetchAPI():
     response_team = requests.get(team_url)
     if response_team.status_code == 200:
         soup_team = BeautifulSoup(response_team.content, 'html.parser')
-        team_elements = soup_team.find_all('span', attrs = {'class':'NavTeamList_ntlName__Mzr6q' })
+        
+        team_elements = soup_team.find_all('a', attrs = {'class':'Anchor_anchor__cSc3P TeamFigure_tfMainLink__OPLFu' })
         teams = [team.get_text() for team in team_elements]
-        for t in range(len(teams)):
-            teams[t] = teams[t][teams[t].index(" ")+1:]
+        
 
     player_url ='https://www.nba.com/players'
     driver = webdriver.Safari()
     driver.get(player_url)
-    time.sleep(0.5)
+    time.sleep(0.9)
     select = Select(driver.find_element("name","TEAM_NAME"))
     for team in teams:
         while True:
             try: 
-                select.select_by_value(str(team))
-                Tier1Map[team]=[]
+                t_team = team[team.index(" ")+1:]
+                select.select_by_value(str(t_team))
+                Tier1Map[t_team]=[]
                 break
             except NoSuchElementException:
-                t_team = team[team.index(" ")+1:]
+                t_team = t_team[t_team.index(" ")+1:]
                 select.select_by_value(str(t_team))
                 Tier1Map[t_team]=[]
                 break
@@ -47,6 +48,7 @@ def RosterFetchAPI():
                 Tier1Map[team].append(player)
             except KeyError:
                 Tier1Map[t_team].append(player)
+    print(Tier1Map)
     return Tier1Map
         
-
+RosterFetchAPI()
