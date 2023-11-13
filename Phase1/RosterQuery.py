@@ -36,9 +36,9 @@ def GetTeamByPlayer(player_id):
     players = cursor.fetchall()
     return players
 
-print(GetPlayer(["KyrieIrving"]))
-print(GetTeam(["Mavericks"]))
-print(GetPlayersByTeam(["Heat"]))
-print(GetTeamByPlayer(["JimmyButler"]))
+#print(GetPlayer(["KyrieIrving"]))
+#print(GetTeam(["Mavericks"]))
+#print(GetPlayersByTeam(["Warriors"]))
+print(GetTeamByPlayer(["StephenCurry"]))
 
 Database.DisconnectDB(cursor,connection)
