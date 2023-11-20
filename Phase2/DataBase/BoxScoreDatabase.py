@@ -7,24 +7,17 @@ import numpy as np
 
 # Connect to the SQLite database
 conn,cursor = conncect_db.connect_to_database('Main')
-#conn_BoxScores,cursor_BoxScores = conncect_db.connect_to_database('BoxScores')
-"""cursor.execute('SELECT BoxScore_Id FROM BoxScores ORDER BY boxscores_id DESC LIMIT 1')
 
-latest_entry = cursor.fetchone()
-latest_year = latest_entry[0:4]
-latest_month = latest_entry[4:6]
-latest_date = latest_entry[6:8]
-
-"""
-# Execute a SELECT query to retrieve all values in the 'Token' column
-cursor.execute('SELECT Token,OT FROM schedule WHERE Winner IS NOT NULL')
-
-# Fetch all the results
+cursor.execute('''
+    SELECT schedule.Token, schedule.OT
+    FROM schedule
+    LEFT JOIN BoxScores ON schedule.Token = BoxScores.Token
+    WHERE BoxScores.Token IS NULL AND schedule.Winner IS NOT NULL
+''')
 tokens = cursor.fetchall()
-#conncect_db.close_database_connection(conn)
-# Iterate through the tokens
 
-conn.execute(f'DROP TABLE IF EXISTS BoxScores')
+
+
 cursor.execute(f'''
     CREATE TABLE IF NOT EXISTS BoxScores (
         boxscores_id INTEGER PRIMARY KEY,
@@ -50,7 +43,8 @@ cursor.execute(f'''
         "PF" REAL,
         "PTS" REAL,
         "+/-" TEXT,
-        "BoxScore_Type" TEXT
+        "BoxScore_Type" TEXT,
+        "Token" TEXT
         
     )
 ''')
@@ -76,6 +70,8 @@ for t in tokens:
     
     if t[1] == "OT":
         header_titles=["G","Q1","Q2","H1","Q3","Q4","H2","OT","AG"]
+    elif t[1] == "2OT":
+        header_titles=["G","Q1","Q2","H1","Q3","Q4","H2","OT1","OT2","AG"]
     else:
         header_titles=["G","Q1","Q2","H1","Q3","Q4","H2","AG"]
 
@@ -124,10 +120,12 @@ for t in tokens:
 
         new_column_names.append("BoxScore_ID")
         new_column_names.append("BoxScore_Type")
+        new_column_names.append("Token")
         mask = dataframes[k][2]!= 'FG'
         df = dataframes[k][mask]
         df["BoxScore_ID"] = tok+"_"+k
         df["BoxScore_Type"] = k[0] if k[0] == 'G' else k[:2]
+        df["Token"] = tok
         df.rename(columns=dict(zip(df.columns, new_column_names)), inplace=True)
         
         df.to_sql(f'BoxScores', conn, if_exists='append', index=False)
