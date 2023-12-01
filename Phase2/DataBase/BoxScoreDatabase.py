@@ -55,7 +55,7 @@ for t in tokens:
     tok = t[0]
     
 
-    box_df = pd.read_csv(f"/Users/roy/Desktop/SPIDE/BoxScores/{tok}.csv",header=None,skiprows= 1)
+    box_df = pd.read_csv(f"/Users/roy/Desktop/SPIDE/Phase2/csvs/BoxScores/{tok}.csv",header=None,skiprows= 1)
     new_row = [np.nan, "Basic Box Score Stats"] + [np.nan] * (len(box_df.columns) - 2)
 
     # Insert the new row at the beginning
@@ -101,8 +101,8 @@ for t in tokens:
             current_dataframe = pd.DataFrame(columns=box_df.columns)
             
         else:    
-            current_dataframe = current_dataframe.append(pd.Series(row, index=box_df.columns), ignore_index=True)
-
+            current_dataframe = current_dataframe._append(pd.Series(row, index=box_df.columns), ignore_index=True)
+            
     # Save the last dataframe
     if current_header is not None:
         if current_header not in dataframes:
