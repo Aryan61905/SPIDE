@@ -7,17 +7,7 @@ import numpy as np
 
 # Connect to the SQLite database
 conn,cursor = conncect_db.connect_to_database('Main')
-
-cursor.execute('''
-    SELECT schedule.Token, schedule.OT
-    FROM schedule
-    LEFT JOIN BoxScores ON schedule.Token = BoxScores.Token
-    WHERE BoxScores.Token IS NULL AND schedule.Winner IS NOT NULL
-''')
-tokens = cursor.fetchall()
-
-
-
+#cursor.execute(f"Drop Table if Exists BoxScores")
 cursor.execute(f'''
     CREATE TABLE IF NOT EXISTS BoxScores (
         boxscores_id INTEGER PRIMARY KEY,
@@ -44,10 +34,26 @@ cursor.execute(f'''
         "PTS" REAL,
         "+/-" TEXT,
         "BoxScore_Type" TEXT,
-        "Token" TEXT
+        "Token" TEXT,
+        "Home" TEXT,
+        "Away" TEXT,
+        "Date" TEXT,
+        "Team" TEXT,
+        "Opponent" TEXT
         
     )
 ''')
+cursor.execute('''
+    SELECT schedule.Token, schedule.OT
+    FROM schedule
+    LEFT JOIN BoxScores ON schedule.Token = BoxScores.Token
+    WHERE BoxScores.Token IS NULL AND schedule.Winner IS NOT NULL
+''')
+tokens = cursor.fetchall()
+
+
+
+
 
 conn.commit()
 
@@ -121,11 +127,22 @@ for t in tokens:
         new_column_names.append("BoxScore_ID")
         new_column_names.append("BoxScore_Type")
         new_column_names.append("Token")
+        new_column_names.append("Home")
+        new_column_names.append("Away")
+        new_column_names.append("Date")
+        new_column_names.append("Team")
+        new_column_names.append("Opponent")
         mask = dataframes[k][2]!= 'FG'
         df = dataframes[k][mask]
         df["BoxScore_ID"] = tok+"_"+k
         df["BoxScore_Type"] = k[0] if k[0] == 'G' else k[:2]
         df["Token"] = tok
+        df["Home"] = tok[9:12]
+        df["Away"] = tok[14:19]
+        df["Date"] = tok[0:8]
+        df["Team"] = k[-3:]
+        df["Opponent"] = tok[14:19] if k[-3:] == tok[9:12] else tok[9:12]
+        
         df.rename(columns=dict(zip(df.columns, new_column_names)), inplace=True)
         
         df.to_sql(f'BoxScores', conn, if_exists='append', index=False)
