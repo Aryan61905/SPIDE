@@ -44,17 +44,17 @@ def main(input):
             result[player_key] = { key: player_data_dict[player_key][key] for key in data_dict['stats'] if key in player_data_dict[player_key]}
     
     else:
+            
+        for x in data_dict['filter']['XGames']:
         
-        while data_dict["filter"]!=[]:
             
-            fil=data_dict["filter"].pop(0)
-            
-            if (fil[0]=='L' or fil[0]=='F') and fil[1].isnumeric():
-                for player_key in data_dict["player"]:
-                    
-                    db_data  = DatabaseApi.getBoxScoreStats('*','BoxScores',['Player','BoxScore_Type'], [player_key,'G'],'DESC' if fil[0]=='L' else 'ASC') 
+            for player_key in data_dict["player"]:
+                
+                for gt in data_dict['filter']['GameType']:
+
+                    db_data  = DatabaseApi.getBoxScoreStats('*','BoxScores',['Player','BoxScore_Type'], [player_key,gt],'DESC' if x[0]=='L' else 'ASC') 
                     #filter_dates(db_data)
-                    num = int(fil[1:])-1
+                    num = int(x[1:])-1
                     if num >len(db_data[0])-1:
                         num = len(db_data[0])-1
                     i=0
@@ -63,11 +63,13 @@ def main(input):
                     while i<=num:
                         
                         player_data_dict[player_key] = dict(zip(db_data[1],db_data[0][i]))
-                        result[player_key+" L"+str(i+1)] = { key: player_data_dict[player_key][key] for key in data_dict['stats'] if key in player_data_dict[player_key]}
+                        result[player_key+" "+x[0]+str(i+1)] = { key: player_data_dict[player_key][key] for key in data_dict['stats'] if key in player_data_dict[player_key]}
                         i=i+1
-                    Parser.parse_output(result)
+                    Parser.parse_output(result,player_key,gt,x)
                     result={}
-            
+                    
+                    
+                
 
     
 
@@ -80,6 +82,6 @@ def main(input):
 
     return
 
-#main("--player Joel Embiid, Luka Dončić, Giannis Antetokounmpo, Kevin Durant, Domantas Sabonis, Devin Booker, Jayson Tatum, Donovan Mitchell, LaMelo Ball, De'Aaron Fox, Damian Lillard --stats PTS,AST,TRB,boxscores_id,Token,Date --filter L5")
+#main("--player Joel Embiid, Luka Dončić, Giannis Antetokounmpo, Kevin Durant, Domantas Sabonis, Devin Booker, Jayson Tatum, Donovan Mitchell, LaMelo Ball, De'Aaron Fox, Damian Lillard --stats PTS,TRB,AST,boxscores_id,Token,Date --filter L5")
 
-main("--player DAL --stats PTS,AST,TRB,boxscores_id,Token,Date --filter L5")
+main("--player Joel Embiid --stats PTS,AST,TRB,3P,boxscores_id,Token,Date --filter L5, H1,H2")
