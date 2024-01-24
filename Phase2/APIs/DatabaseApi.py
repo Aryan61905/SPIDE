@@ -28,6 +28,21 @@ def getBoxScoreStats(select_v,table_v,where_v,val,order="ASC"):
     else:
         cursor.execute(query + f" ORDER BY Date {order}")
     return [cursor.fetchall(),[description[0] for description in cursor.description]]
+
+def getBoxScoreStatsByDateRange(select_v,table_v,where_v,val,sd,ed,order="ASC"):
+    order_val = select_v if select_v != "*" else False
+    query = f"SELECT {select_v} FROM {table_v} WHERE "
+    while where_v:
+        query += where_v.pop(0) + " = " +'"'+val.pop(0)+'"' +" AND "
+    query += "Date >= "+sd+ " AND Date <= "+ed
+    #query=query[:-5]
+    if order_val !=False:
+        cursor.execute(query + f" ORDER BY {order_val} {order}")
+    else:
+        cursor.execute(query + f" ORDER BY Date {order}")
+    return [cursor.fetchall(),[description[0] for description in cursor.description]]
+
+    
    
 
 

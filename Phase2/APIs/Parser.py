@@ -2,7 +2,18 @@ from tabulate import tabulate
 
 def parse_input(input):
     input_list = input.split('--')
-    input_dict = {'player': [], 'team': [], 'stats': [], 'filter':[], 'date': [], 'schedule':[]}
+    input_dict = {'player': [], 'team': [], 'stats': [], 'date': [], 'schedule':[],
+                  
+                  'filter':{ 
+                      
+                      'GameType':[],
+                      'XGames':[],
+                      'DateRange':[],
+                      'Date':[]
+                      
+                  }, 
+                  
+                  }
 
     for item in input_list:
         if 'player' in item:
@@ -23,21 +34,24 @@ def parse_input(input):
         elif 'filter' in item:
             #filter : LN, FN, home, away
             filter = item.split('filter')[1].strip()
-            
+
             if filter:
-                ret_dict ={}
-                input_dict['filter'].extend([f.strip() for f in filter.split(',')]) 
                 
-                for i in input_dict['filter']:
+                filter = [f.strip() for f in filter.split(',')]
+                
+                for i in filter:
                     
                     if i in ['Q1','Q2','Q3','Q4','H1','H2','G','OT1','OT2']:
-                        ret_dict.setdefault('GameType',[]).append(i)
+                        input_dict["filter"]['GameType'].append(i)
 
                     elif i[0] in 'LF' and i[1:].isdigit():
-                        ret_dict.setdefault('XGames',[]).append(i)
-                
-                input_dict['filter'] = ret_dict
-
+                        input_dict["filter"]['XGames'].append(i)
+                    
+                    elif '->' in i:
+                        input_dict["filter"]['DateRange'].append(i)
+                    
+                    elif i[0:2].isdigit() and i[2] == '/' and i[3:5].isdigit() and i[5] == '/' and i[6:8].isdigit():
+                        input_dict["filter"]['Date'].append(i)
 
         
         elif 'date' in item:
