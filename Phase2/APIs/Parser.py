@@ -5,12 +5,11 @@ def parse_input(input):
     input_dict = {'player': [], 'team': [], 'stats': [], 'date': [], 'schedule':[],
                   
                   'filter':{ 
-                      
                       'GameType':[],
                       'XGames':[],
                       'DateRange':[],
-                      'Date':[]
-                      
+                      'Date':[],
+                      'PlayerOrTeam':[]
                   }, 
                   
                   }
@@ -52,6 +51,9 @@ def parse_input(input):
                     
                     elif i[0:2].isdigit() and i[2] == '/' and i[3:5].isdigit() and i[5] == '/' and i[6:8].isdigit():
                         input_dict["filter"]['Date'].append(i)
+                    
+                    elif i[0] in '+-':
+                        input_dict["filter"]["PlayerOrTeam"].append(i)
 
         
         elif 'date' in item:
