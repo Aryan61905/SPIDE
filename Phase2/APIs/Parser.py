@@ -2,7 +2,7 @@ from tabulate import tabulate
 
 def parse_input(input):
     input_list = input.split('--')
-    input_dict = {'player': [], 'team': [], 'stats': [], 'date': [], 'schedule':[],
+    input_dict = {'player': [], 'team': [], 'stats': [], 'schedule':[],
                   
                   'filter':{ 
                       'GameType':[],
@@ -54,13 +54,6 @@ def parse_input(input):
                     
                     elif i[0] in '+-':
                         input_dict["filter"]["PlayerOrTeam"].append(i)
-
-        
-        elif 'date' in item:
-            #date : [singledate], [date1,date2,date3], [startdate->enddate]
-            date = item.split('date')[1].strip()
-            if date:
-                input_dict['date'].extend([d.strip() for d in date.split(',')])
         
         elif 'schedule' in item:
             schedule = item.split('schedule')[1].strip()
@@ -83,6 +76,13 @@ def parse_output(output,player,GameType,XGames):
     print(table)
     
 
+def parse_output_special(output,player,GameType,XGames):
+    #print(output)
+    for x in output:
+        
+        print(output[x])
+    
+    
     
 
     
