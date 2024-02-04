@@ -23,18 +23,32 @@ def getBoxScoreStats(select_v,table_v,where_v,val,limit,order="ASC"):
     order_val = False
     query = f"SELECT {select_v} FROM {table_v} WHERE "
     while where_v:
-        query += where_v.pop(0) + " = " +"'"+val.pop(0)+"'" +" AND "
+        query += where_v.pop(0) + " = " +'"'+val.pop(0)+'"' +" AND "
     query=query[:-5]
     
     if order == "AVG":
-        cursor.execute(query)
-        return [cursor.fetchall(),[description[0] for description in cursor.description]]
+        try: 
+            cursor.execute(query)
+            return [cursor.fetchall(),[description[0] for description in cursor.description]]
+        except:
+            print("Failure "+ query)
+            return 0
     
     if order_val !=False:
-        cursor.execute(query + f" ORDER BY {order_val} {order}")
+        try:
+            cursor.execute(query + f" ORDER BY {order_val} {order}")
+            return [cursor.fetchall(),[description[0] for description in cursor.description]]
+        except:
+            print("Failure "+ query)
+            return 0
     else:
-        cursor.execute(query + f" ORDER BY Date {order}")
-    return [cursor.fetchall(),[description[0] for description in cursor.description]]
+        try:
+            cursor.execute(query + f" ORDER BY Date {order}")
+            return [cursor.fetchall(),[description[0] for description in cursor.description]]
+        except:
+            print("Failure "+ query)
+            return 0
+    
 
 def getBoxScoreStatsByDateRange(select_v,table_v,where_v,val,sd,ed,order="ASC"):
     order_val = select_v if select_v != "*" else False

@@ -1,4 +1,6 @@
 from tabulate import tabulate
+import pandas as pd
+import matplotlib.pyplot as plt
 
 def parse_input(input):
     input_list = input.split('--')
@@ -74,13 +76,18 @@ def parse_output(output,player,GameType,XGames):
     headers = [player+" "+ XGames+ " in "+ GameType]+ columns
     table  = tabulate(table_data,headers=headers,tablefmt='pretty')
     print(table)
+    return [headers]+table_data
+    
     
 
 def parse_output_special(output,player,GameType,XGames):
     #print(output)
+    
     for x in output:
         
         print(output[x])
+    return (output,player)
+    
     
     
     
