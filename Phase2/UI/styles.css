@@ -1,0 +1,156 @@
+body {
+  margin: 0;
+  padding: 0;
+}/* Adjust the position of the button */
+
+/* Adjust the position of the button */
+#togglePanelButton {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  cursor: pointer;
+}
+
+.line {
+  width: 25px;
+  height: 3px;
+  background-color: #fff;
+  margin-bottom: 5px;
+}
+
+
+
+/* Adjust the width of the home menu */
+#home-menu {
+  width: 25%; /* Decrease the width to make room for the button */
+  height: 100vh;
+  overflow-y: auto;
+  background-color: #001b39;
+  padding: 20px;
+  box-sizing: border-box;
+  position: fixed;
+  top: 0;
+  left: -200%;
+  z-index: 999;
+}
+#home-menu.expanded{
+  left: 0%;
+}
+
+
+
+#home-menu h2 {
+  color: #00cc00;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+#home-menu ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+#home-menu li {
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+#home-menu li:hover {
+  text-decoration: underline;
+}
+
+#history {
+  margin-top: auto;
+}
+
+#history h2 {
+  color: #00cc00;
+  font-size: 16px;
+}
+
+#command-history {
+  list-style-type: none;
+  padding: 0;
+  margin: 10px 0;
+  left: -200%;
+}
+
+#command-history.expanded{
+  left: 0%;
+}
+
+
+#command-history li {
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+/* Adjust the position of the content */
+#content {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0%; /* Adjust the left position to account for the width of the home menu */
+  display: flex;
+  flex-direction: column;
+}
+#content.expanded
+{
+  left: 25%;  
+}
+
+#terminal {
+  flex-grow: 1;
+  background-color: #000;
+  color: #d28606;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+#input-container {
+  display: flex;
+  align-items: center;
+  background-color: #1e1e1e;
+  padding: 10px 20px;
+}
+
+#prompt {
+  color: #00ff00;
+}
+
+#input {
+  color: #fff;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-family: Arial, sans-serif;
+  flex-grow: 1;
+  margin-left: 10px;
+}
+
+.terminal-table {
+  border-collapse: collapse;
+  width: 80%;
+  font-size: 14px; /* Adjust font size */
+  margin-top: 1%;
+  
+}
+
+.terminal-table th, .terminal-table td {
+  border: 1px solid #ddd;
+  padding: 4px; /* Adjust padding */
+  text-align: left;
+}
+
+.terminal-table th {
+  background-color: #211c1c;
+}

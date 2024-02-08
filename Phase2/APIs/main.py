@@ -1,5 +1,6 @@
 import DatabaseApi
 import Parser
+from conncect_db import connect_to_database, close_database_connection
 
 
 
@@ -180,5 +181,6 @@ def main(input,conn,cursor):
 #main("--player Nikola Jokić,Julius Randle, Jalen Brunson,Shai Gilgeous-Alexander,Anthony Davis, Kawhi Leonard,LeBron James --stats PTS,TRB,AST,boxscores_id,Token,Date --filter L10,G")
 #main("--player Devin Booker --stats 3P,3PA,boxscores_id,Token,Date --filter L6,H1, 01/10/2024->01/16/2024")
 #main("--player  Kevin Durant,Devin Booker,Anthony Davis,Domantas Sabonis,Giannis Antetokounmpo,Jayson Tatum,LeBron James, Stephen Curry, Jalen Brunson, Joel Embiid, Tyrese Haliburton --stats AVG(PTS),AVG(AST),AVG(TRB),AVG(PTS+TRB+AST>45),Date --filter L8,G")
-#main_ret=main("--player Miles Bridges,Devin Booker --stats PTS,TRB,AST, AVG(PTS+TRB+AST),Date,MP --filter L5,G")
+#conn,cursor= connect_to_database('Main')
+#main("--player Paul George,Jayson Tatum,Stephen Curry, Trae Young,Donovan Mitchell,Domantas Sabonis   --stats PTS,TRB,AST, AVG(PTS+TRB+AST),Date,MP --filter L5,G",conn,cursor)
 #main_ret

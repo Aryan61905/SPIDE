@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terminal</title>
+  <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+  
+  
+    <div id="home-menu">
+      <h2>I/O</h2>
+      <ul>
+        <li id="menu-players">Players</li>
+        <li id="menu-teams">Teams</li>
+        <li id="menu-schedule">Schedule</li>
+        <li id="menu-standings">Standings</li>
+        <li id="menu-stats">Stats</li>
+        <li id="menu-analysis">Analysis</li>
+      </ul>
+      <div id="history">
+        <h2>Command History</h2>
+        <ul id="command-history"></ul>
+      </div>
+    </div>
+  </div>
+  
+  <div id="content">
+    <div id="terminal"></div>
+    <div id="input-container">
+      <div id="togglePanelButton">
+        <div class="line"></div>
+        <div class="line"></div>
+        <div class="line"></div>
+      </div> 
+      <span id="prompt">&gt;&nbsp;</span>
+      <input type="text" id="input" autofocus>
+    </div>
+  
+  <script src="script.js"></script>
+</body>
+</html>
