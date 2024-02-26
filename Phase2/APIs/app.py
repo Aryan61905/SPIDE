@@ -22,15 +22,17 @@ def handle_command():
     response = process_command(command)
     res = response[0]
     data={}
-    
-    for r in range(len(res)):
-        
-        if type(res[r][0])==dict:
-            data[str(res[r][1])].append(res[r][0])
-        elif type(res[r][0])==list:
-            data[str(res[r][0][0].split()[0]+" "+res[r][0][0].split()[1])] = res[r]
-    print(data)
-    return jsonify(data)
+    if res:
+        for r in range(len(res)):
+            
+            if type(res[r][0])==dict:
+                data[str(res[r][1])].append(res[r][0])
+            elif type(res[r][0])==list:
+                data[str(res[r][0][0].split()[0]+" "+res[r][0][0].split()[1])] = res[r]
+        print(data)
+        return jsonify(data)
+
+
 
 def process_command(command):
     # You can implement your command processing logic here

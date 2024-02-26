@@ -44,24 +44,49 @@ def main(input,conn,cursor):
         for player_key in data_dict["player"]:
         
             for gt in data_dict['filter']['GameType']:
-                
-                db_data  = DatabaseApi.getBoxScoreStatsByDateRange(conn,cursor,'*','BoxScores',['Player','BoxScore_Type'],[player_key,gt],sd,ed,'DESC' if ed<sd else 'ASC')
+                special = {'AVG':{},'SUM':{}}
+                copy_stats = data_dict['stats'][:]
+                for i in data_dict['stats']:
+                    if '(' in i and i[:i.index('(')] in special.keys():
+                        special[i[:i.index('(')]][i[i.index('(')+1:i.index(')')]]=0
+                        data_dict['stats'][data_dict['stats'].index(i)]= i[i.index('(')+1:i.index(')')]
+                    
+                select_v = ', '.join(['\"{}\"'.format(item) if item[0].isdigit() else '{}'.format(item) for item in data_dict['stats']])
+                select_v += ', Opponent'
+                db_data  = DatabaseApi.getBoxScoreStatsByDateRange(conn,cursor,select_v,'BoxScores',['Player','BoxScore_Type'],[player_key,gt],sd,ed,'DESC' if ed<sd else 'ASC')
                 num = len(db_data[0])-1
                 i=0
-                
+                av = 0
                 
                 while i<=num:
                     
                     player_data_dict[player_key] = dict(zip(db_data[1],db_data[0][i]))
                     result[player_key+" VS "+player_data_dict[player_key]["Opponent"]+" on " + player_data_dict[player_key]["Date"][4:6]+"/"+player_data_dict[player_key]["Date"][6:8]+"/"+player_data_dict[player_key]["Date"][0:4]] = { key: player_data_dict[player_key][key] for key in data_dict['stats'] if key in player_data_dict[player_key]}
+                    if db_data[0][i][0] == None:
+                        i=i+1
+                        av+=1
+                        continue
+                    for st in db_data[1]:
+                        for y in special:
+                            if st in special[y]:
+                                special[y][st]+=player_data_dict[player_key][st]              
+
                     i=i+1
+                
+                for st in special['AVG']:
+                    
+                    special["AVG"][st]/= int(len(result.keys())) - av
+                
                 if num >=0:
                     if sd!=ed:
                         ret.append(Parser.parse_output(result,player_key,gt,dr[0]+"->"+dr[1]))
+                        ret.append(Parser.parse_output_special(special,player_key,gt,dr[0]+"->"+dr[1]))
                     else:
                         ret.append(Parser.parse_output(result,player_key,gt,sd))
+                        ret.append(Parser.parse_output_special(special,player_key,gt,sd))
 
                     result={}
+                    data_dict['stats']=copy_stats
         if ret!=[]:
             return ret
 
@@ -78,6 +103,7 @@ def main(input,conn,cursor):
             #result[player_key] = { key: player_data_dict[player_key][key] for key in data_dict['stats'] if key in player_data_dict[player_key]}
             ret.append(Parser.parse_output(result,player_key,'OVR','AVG'))
             result={}
+            
         
         if ret!=[]:
             return ret
@@ -182,5 +208,5 @@ def main(input,conn,cursor):
 #main("--player Devin Booker --stats 3P,3PA,boxscores_id,Token,Date --filter L6,H1, 01/10/2024->01/16/2024")
 #main("--player  Kevin Durant,Devin Booker,Anthony Davis,Domantas Sabonis,Giannis Antetokounmpo,Jayson Tatum,LeBron James, Stephen Curry, Jalen Brunson, Joel Embiid, Tyrese Haliburton --stats AVG(PTS),AVG(AST),AVG(TRB),AVG(PTS+TRB+AST>45),Date --filter L8,G")
 #conn,cursor= connect_to_database('Main')
-#main("--player Paul George,Jayson Tatum,Stephen Curry, Trae Young,Donovan Mitchell,Domantas Sabonis   --stats PTS,TRB,AST, AVG(PTS+TRB+AST),Date,MP --filter L5,G",conn,cursor)
+#main("--player Joel Embiid,Paul George,Jayson Tatum,Stephen Curry, Trae Young,Donovan Mitchell,Domantas Sabonis   --stats PTS,TRB,AST, AVG(PTS+TRB+AST),Date,MP --filter 01/01/2024->02/01/2024,G",conn,cursor)
 #main_ret

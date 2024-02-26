@@ -1,9 +1,11 @@
 body {
   margin: 0;
   padding: 0;
-}/* Adjust the position of the button */
+  background-color: #000;
+  font-family: 'Courier New', Courier, monospace;
+}
 
-/* Adjust the position of the button */
+/* Adjust the position and style of the toggle button */
 #togglePanelButton {
   position: absolute;
   top: 20px;
@@ -17,13 +19,13 @@ body {
   height: 3px;
   background-color: #fff;
   margin-bottom: 5px;
+  /* Neon glow effect */
+  box-shadow: 0 0 10px #fff;
 }
-
-
 
 /* Adjust the width of the home menu */
 #home-menu {
-  width: 25%; /* Decrease the width to make room for the button */
+  width: 25%;
   height: 100vh;
   overflow-y: auto;
   background-color: #001b39;
@@ -34,14 +36,14 @@ body {
   left: -200%;
   z-index: 999;
 }
-#home-menu.expanded{
+
+#home-menu.expanded {
   left: 0%;
 }
 
-
-
+/* Styling for home menu items */
 #home-menu h2 {
-  color: #00cc00;
+  color: #0ff;
   font-size: 20px;
   margin-bottom: 20px;
 }
@@ -54,7 +56,7 @@ body {
 
 #home-menu li {
   color: #fff;
-  font-family: Arial, sans-serif;
+  font-family: 'Courier New', Courier, monospace;
   font-size: 16px;
   margin-bottom: 10px;
   cursor: pointer;
@@ -64,12 +66,13 @@ body {
   text-decoration: underline;
 }
 
+/* Adjust the position of the command history */
 #history {
   margin-top: auto;
 }
 
 #history h2 {
-  color: #00cc00;
+  color: #0ff;
   font-size: 16px;
 }
 
@@ -80,51 +83,54 @@ body {
   left: -200%;
 }
 
-#command-history.expanded{
+#command-history.expanded {
   left: 0%;
 }
 
-
 #command-history li {
   color: #fff;
-  font-family: Arial, sans-serif;
+  font-family: 'Courier New', Courier, monospace;
   font-size: 14px;
   margin-bottom: 5px;
 }
 
-/* Adjust the position of the content */
+/* Adjust the position and style of the content */
 #content {
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
-  left: 0%; /* Adjust the left position to account for the width of the home menu */
+  left: 0%;
   display: flex;
   flex-direction: column;
 }
-#content.expanded
-{
-  left: 25%;  
+
+#content.expanded {
+  left: 25%;
 }
 
+/* Terminal styling */
 #terminal {
   flex-grow: 1;
   background-color: #000;
-  color: #d28606;
+  margin-top: 2%;
+  color: #0ff;
   padding: 20px;
-  box-sizing: border-box;
-  overflow-y: auto;
+  overflow: scroll;
+  
 }
 
 #input-container {
   display: flex;
   align-items: center;
-  background-color: #1e1e1e;
+  background-color: #333;
   padding: 10px 20px;
 }
 
 #prompt {
-  color: #00ff00;
+  color: #0ff;
+  font-weight: bold;
+  text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 70px #0ff, 0 0 80px #0ff, 0 0 100px #0ff, 0 0 150px #0ff;
 }
 
 #input {
@@ -132,25 +138,72 @@ body {
   background-color: transparent;
   border: none;
   outline: none;
-  font-family: Arial, sans-serif;
+  font-family: 'Courier New', Courier, monospace;
   flex-grow: 1;
   margin-left: 10px;
 }
 
+/* Table styling */
 .terminal-table {
   border-collapse: collapse;
-  width: 80%;
-  font-size: 14px; /* Adjust font size */
+  width: auto;
+  table-layout: auto;
+  font-size: 14px;
   margin-top: 1%;
-  
 }
 
-.terminal-table th, .terminal-table td {
-  border: 1px solid #ddd;
-  padding: 4px; /* Adjust padding */
+.terminal-table th,
+.terminal-table td {
+  border: 1px solid #0ff;
+  padding: 5px;
   text-align: left;
 }
 
 .terminal-table th {
-  background-color: #211c1c;
+  background-color: #001b39;
+}
+.card-container {
+
+  margin-bottom: 20px;
+  width: 100%; /* Set a fixed width */
+}
+/* Card styling */
+.card {
+  display: flex;
+  flex-direction: row; /* Change direction to horizontal */
+  overflow-x: hidden; /* Hide overflow */
+  background-color: #001b39;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  width: 98%;
+  margin-top: 1%;
+  flex-wrap: wrap; 
+  align-items: center;
+}
+
+.card table {
+  width: 95%;
+  margin-bottom: 10px;
+  border-collapse: collapse;
+}
+
+
+.card th,
+.card td {
+  border: 1px solid #0ff;
+  padding: 8px;
+}
+
+.card th {
+  background-color: #001b39;
+  font-weight: bold;
+}
+
+.slider
+{
+  font-size:x-large;
+  color: #0ff;
+  font-weight: bold;
+  text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 70px #0ff, 0 0 80px #0ff, 0 0 100px #0ff, 0 0 150px #0ff;
 }

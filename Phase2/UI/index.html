@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Terminal</title>
+  
   <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
@@ -18,6 +19,7 @@
         <li id="menu-standings">Standings</li>
         <li id="menu-stats">Stats</li>
         <li id="menu-analysis">Analysis</li>
+        
       </ul>
       <div id="history">
         <h2>Command History</h2>
@@ -27,17 +29,24 @@
   </div>
   
   <div id="content">
-    <div id="terminal"></div>
+    <div id="togglePanelButton">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+    <div id="terminal">
+    
+    </div>
     <div id="input-container">
-      <div id="togglePanelButton">
-        <div class="line"></div>
-        <div class="line"></div>
-        <div class="line"></div>
-      </div> 
       <span id="prompt">&gt;&nbsp;</span>
       <input type="text" id="input" autofocus>
     </div>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
   
   <script src="script.js"></script>
+  
+
 </body>
 </html>
