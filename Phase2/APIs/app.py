@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 app = Flask(__name__)
 CORS(app)
-#--player Paul George,Jayson Tatum--stats PTS,TRB,AST, AVG(PTS+TRB+AST),Date,MP --filter L5,G
+
 @app.route('/api/terminal', methods=['POST'])
 def handle_command():
     data = request.get_json()
@@ -20,8 +20,10 @@ def handle_command():
         return jsonify({'error': 'No command provided'}), 400
     
     response = process_command(command)
+    
     res = response[0]
     data={}
+    
     if res:
         for r in range(len(res)):
             
@@ -29,7 +31,7 @@ def handle_command():
                 data[str(res[r][1])].append(res[r][0])
             elif type(res[r][0])==list:
                 data[str(res[r][0][0].split()[0]+" "+res[r][0][0].split()[1])] = res[r]
-        print(data)
+        
         return jsonify(data)
 
 
@@ -43,4 +45,5 @@ def process_command(command):
 
 if __name__ == '__main__':
     app.run(debug=True,port=8000)
+    #process_command("--player Stephen Curry --stats PTS,Date --filter G, 01/01/2024->01/10/2024")
 

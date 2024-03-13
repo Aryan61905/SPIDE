@@ -82,6 +82,10 @@ togglePanelButton.addEventListener('click', function() {
 
 // Add event listener for input field
 input.addEventListener('keydown', function(event) {
+  if (event.key === 'ArrowUp')
+  {
+   
+  }
   if (event.key === 'Enter') {
     handleInput();
   }
@@ -172,10 +176,10 @@ function displayData(data) {
       console.log(dataHistory[cardClassName.slice(0,-5)][0].slice(1));
       console.log(dataHistory[cardClassName.slice(0,-5)].slice(1,-1));
       data = dataHistory[cardClassName.slice(0,-5)].slice(1,-1);
-      const xLabels = data.map(row => row[0].slice(-2));
+      const xLabels = data.map(row => row[0].slice(-2)).reverse();
       const datasets = dataHistory[cardClassName.slice(0,-5)][0].slice(1).map((label, index) => ({
         label: label,
-        data: data.map(row => row[index + 1]),
+        data: data.map(row => row[index + 1]).reverse(),
         borderColor: '#' + (Math.random().toString(16) + '000000').substring(2, 8).toUpperCase(),
         fill: false
     }));

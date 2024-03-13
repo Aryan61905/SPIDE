@@ -11,7 +11,8 @@ def parse_input(input):
                       'XGames':[],
                       'DateRange':[],
                       'Date':[],
-                      'PlayerOrTeam':[]
+                      'Player':[],
+                      'Team':[]
                   }, 
                   
                   }
@@ -55,12 +56,14 @@ def parse_input(input):
                         input_dict["filter"]['Date'].append(i)
                     
                     elif i[0] in '+-':
-                        input_dict["filter"]["PlayerOrTeam"].append(i)
+                        input_dict["filter"]["Player"].append(i)
         
         elif 'schedule' in item:
             schedule = item.split('schedule')[1].strip()
             if schedule:
                 input_dict['schedule'].extend([s.strip() for s in schedule.split(',')])
+
+        
 
 
     return input_dict

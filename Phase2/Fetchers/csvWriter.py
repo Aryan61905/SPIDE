@@ -1,9 +1,6 @@
 
 import csv
 
-
-
-
 def csv_writer(soup,fileName,m):
     tables = soup.find_all("table")
 

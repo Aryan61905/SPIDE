@@ -18,3 +18,4 @@ def OverallTeamStats():
         print("Failed to retrieve the webpage.")
 
 OverallTeamStats()
+

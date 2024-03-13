@@ -33,6 +33,12 @@ def main(input,conn,cursor):
         
         data_dict['player'] = [val for val in data_dict['player'] if val not in teams]
 
+        for player_key in data_dict['filter']['Player']:
+            if player_key[1:] in teams:
+                data_dict['filter']['Team'].append(player_key)
+         
+        data_dict['filter']['Player'] = [val for val in data_dict['filter']['Player'] if val[1:] not in teams]        
+
     def getStatsByDateRange(sd,ed):
         ret=[]     
         result={}
@@ -96,7 +102,11 @@ def main(input,conn,cursor):
         for player_key in data_dict['player']:
 
             #db_data = DatabaseApi.getStats('*','Players','player',player_key)
+            
+            
             select_v = ', '.join(['AVG(\"{}\")'.format(item) if item[0].isdigit() else 'AVG({})'.format(item) for item in data_dict['stats']])
+            
+
             db_data  = DatabaseApi.getBoxScoreStats(conn,cursor,select_v,'BoxScores',['Player','BoxScore_Type'], [player_key,gt],None,'AVG') 
             player_data_dict[player_key] = dict(zip(db_data[1],db_data[0][0]))
             result[player_key]  = player_data_dict[player_key]
@@ -124,37 +134,133 @@ def main(input,conn,cursor):
                         data_dict['stats'][data_dict['stats'].index(i)]= i[i.index('(')+1:i.index(')')]
                     
                 select_v = ', '.join(['\"{}\"'.format(item) if item[0].isdigit() else '{}'.format(item) for item in data_dict['stats']])
-                select_v += ', Opponent'
+                select_v += ', Opponent,Token'
                 num = int(x[1:])-1
-                db_data  = DatabaseApi.getBoxScoreStats(conn,cursor,select_v,'BoxScores',['Player','BoxScore_Type'], [player_key,gt],num,'DESC' if x[0]=='L' else 'ASC') 
-                if num >len(db_data[0])-1:
-                    num = len(db_data[0])-1
-                i=0
-                av = 0
-                while i<=num:
-                    
-                    player_data_dict[player_key] = dict(zip(db_data[1],db_data[0][i]))
-                    result[player_key+" VS "+player_data_dict[player_key]["Opponent"]+" "+x[0]+str(i+1)] = { key: player_data_dict[player_key][key] for key in data_dict['stats'] if key in player_data_dict[player_key]}
-                    if db_data[0][i][0] == None:
-                        i=i+1
-                        av+=1
-                        continue
-                    for st in db_data[1]:
-                        for y in special:
-                            if st in special[y]:
-                                special[y][st]+=player_data_dict[player_key][st]              
+                db_data  = DatabaseApi.getBoxScoreStats(conn,cursor,select_v,'BoxScores',['Player','BoxScore_Type'], [player_key,gt],num,'DESC' if x[0]=='L' else 'ASC')
+                c_db_data =db_data[:]
+                if data_dict['filter']['Player'] or data_dict['filter']['Team']:
 
-                    i=i+1
+                    for op_player in data_dict['filter']['Player']:
+                        
+                        copy_stats = data_dict['stats'][:]
+                        num = int(x[1:])-1
+                        if op_player[0]=='+':
+                            select_v = 'PTS,Player,Opponent,MP,PTS,Date,Token'
+                            
+                            op_db_data = DatabaseApi.getBoxScoreStats(conn,cursor,select_v,'BoxScores',['Player','BoxScore_Type'], [op_player[1:],gt],num,'DESC')
+                            tokens = [tok[-1] for tok in op_db_data[0]]
+                            db_data[0] = [vals for vals in db_data[0] if vals[-1] in tokens and vals[0]!= None]
+
+                        if num >len(db_data[0])-1:
+                            num = len(db_data[0])-1
+                        i=0
+                        av = 0
+                        while i<=num:
+                            
+                            player_data_dict[player_key] = dict(zip(db_data[1],db_data[0][i]))
+                            result[player_key+" VS "+player_data_dict[player_key]["Opponent"]+" "+op_player+" "+" "+x[0]+str(i+1)] = { key: player_data_dict[player_key][key] for key in data_dict['stats'] if key in player_data_dict[player_key]}
+                            if db_data[0][i][0] == None:
+                                i=i+1
+                                av+=1
+                                continue
+                            for st in db_data[1]:
+                                for y in special:
+                                    if st in special[y]:
+                                        special[y][st]+=player_data_dict[player_key][st]              
+
+                            i=i+1
+                        
+                        
+                        for st in special['AVG']:
+                                special["AVG"][st]/= len(db_data[0]) - av
+                        
+                        ret.append(Parser.parse_output(result,player_key,gt,x))
+                        ret.append(Parser.parse_output_special(special,player_key,gt,x))
+                        result={}
+                        for st in db_data[1]:
+                            for y in special:
+                                if st in special[y]:
+                                    special[y][st]=0
+                        
+
                 
+                    for op_team in data_dict['filter']['Team']:
+                       
+                        
+                        
+                        copy_stats = data_dict['stats'][:]
+                        db_data = c_db_data[:]
+                        num = int(x[1:])-1
+                        if op_team[0]=='+':
+                            
+                            op_db_data  = DatabaseApi.getBoxScoreStats(conn,cursor,select_v,'BoxScores',['Player','BoxScore_Type','Opponent'], [player_key,gt,op_team[1:]],num,'DESC' if x[0]=='L' else 'ASC')
+                            tokens = [tok[-1] for tok in op_db_data[0]]
+                            db_data[0] = [vals for vals in db_data[0] if vals[-1] in tokens and vals[0]!= None]
+                        if num >len(db_data[0])-1:
+                            num = len(db_data[0])-1
+                        i=0
+                        av = 0
+                        while i<=num:
+                            
+                            player_data_dict[player_key] = dict(zip(db_data[1],db_data[0][i]))
+                            result[player_key+" VS "+player_data_dict[player_key]["Opponent"]+" "+x[0]+str(i+1)] = { key: player_data_dict[player_key][key] for key in data_dict['stats'] if key in player_data_dict[player_key]}
+                            if db_data[0][i][0] == None:
+                                i=i+1
+                                av+=1
+                                continue
+                            for st in db_data[1]:
+                                for y in special:
+                                    if st in special[y]:
+                                        special[y][st]+=player_data_dict[player_key][st]              
+
+                            i=i+1
+                        
+                        
+                        for st in special['AVG']:
+                                special["AVG"][st]/= len(db_data[0]) - av
+                        
+                        ret.append(Parser.parse_output(result,player_key,gt,x))
+                        ret.append(Parser.parse_output_special(special,player_key,gt,x))
+                        result={}
+                        for st in db_data[1]:
+                            for y in special:
+                                if st in special[y]:
+                                    special[y][st]=0
+                        
+                        
                 
-                for st in special['AVG']:
-                        special["AVG"][st]/= int(x[1:]) - av
-                
-                ret.append(Parser.parse_output(result,player_key,gt,x))
-                ret.append(Parser.parse_output_special(special,player_key,gt,x))
-                result={}
-                data_dict['stats']=copy_stats
-        
+                else:
+                    
+                    
+                    if num >len(db_data[0])-1:
+                        num = len(db_data[0])-1
+                    i=0
+                    av = 0
+                    while i<=num:
+                        
+                        player_data_dict[player_key] = dict(zip(db_data[1],db_data[0][i]))
+                        result[player_key+" VS "+player_data_dict[player_key]["Opponent"]+" "+x[0]+str(i+1)] = { key: player_data_dict[player_key][key] for key in data_dict['stats'] if key in player_data_dict[player_key]}
+                        if db_data[0][i][0] == None:
+                            i=i+1
+                            av+=1
+                            continue
+                        for st in db_data[1]:
+                            for y in special:
+                                if st in special[y]:
+                                    special[y][st]+=player_data_dict[player_key][st]              
+
+                        i=i+1
+                    
+                    
+                    for st in special['AVG']:
+                            special["AVG"][st]/= int(x[1:]) - av
+                    
+                    ret.append(Parser.parse_output(result,player_key,gt,x))
+                    ret.append(Parser.parse_output_special(special,player_key,gt,x))
+                    result={}
+                    
+                    data_dict['stats']=copy_stats
+
         if ret!=[]:
             return ret
         

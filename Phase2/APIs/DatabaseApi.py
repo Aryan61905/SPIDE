@@ -21,7 +21,10 @@ def getBoxScoreStats(conn,cursor,select_v,table_v,where_v,val,limit,order="ASC")
     order_val = False
     query = f"SELECT {select_v} FROM {table_v} WHERE "
     while where_v:
-        query += where_v.pop(0) + " = " +'"'+val.pop(0)+'"' +" AND "
+        if type(val[0]) != list:
+            query += where_v.pop(0) + " = " +'"'+val.pop(0)+'"' +" AND "
+        else:
+            query += where_v.pop(0) + " in " +'"'+str(val.pop(0))+'"' +" AND "
     query=query[:-5]
     
     if order == "AVG":
@@ -31,6 +34,7 @@ def getBoxScoreStats(conn,cursor,select_v,table_v,where_v,val,limit,order="ASC")
     if order_val !=False:
         cursor.execute(query + f" ORDER BY {order_val} {order}")
     else:
+        
         cursor.execute(query + f" ORDER BY Date {order}")
     return [cursor.fetchall(),[description[0] for description in cursor.description]]
 
