@@ -23,16 +23,14 @@ def handle_command():
     
     res = response[0]
     data={}
-    
-    if res:
-        for r in range(len(res)):
-            
-            if type(res[r][0])==dict:
-                data[str(res[r][1])].append(res[r][0])
-            elif type(res[r][0])==list:
-                data[str(res[r][0][0].split()[0]+" "+res[r][0][0].split()[1])] = res[r]
-        
-        return jsonify(data)
+    for r in res:
+        for k in r.keys():
+            if k in data:
+                data[k].append(r[k])
+            else:
+                data[k] = r[k]
+
+    return jsonify(data)
 
 
 
@@ -45,5 +43,5 @@ def process_command(command):
 
 if __name__ == '__main__':
     app.run(debug=True,port=8000)
-    #process_command("--player Stephen Curry --stats PTS,Date --filter G, 01/01/2024->01/10/2024")
+    #process_command("--player Deandre Ayton, Richaun Holmes, Immanuel Quickley, Vasilije Micić, Gary Trent Jr., Charles Bassey, Josh Hart, Chris Boucher, Marcus Smart, Kelly Olynyk, Dalano Banton, Dejounte Murray, Brice Sensabaugh, James Wiseman, Jontay Porter, Jaylen Brown, Collin Gillespie, Damian Jones, Naz Reid, Nate Hinton, John Konchar, Simone Fontecchio, P.J. Tucker, Jock Landale, Paul Reed, Nickeil Alexander-Walker, Luke Kornet, Jalen McDaniels, Kevin Durant, GG Jackson II, Trayce Jackson-Davis, Luka Garza, Cam Thomas, Julian Champagnie, Kyle Kuzma, Gradey Dick, Corey Kispert, Grant Williams, Trey Jemison, Kelly Oubre Jr. --stats AVG(PTS),AVG(TRB),AVG(AST),AVG(PTS+TRB+AST),Team --filter G, L5")
 

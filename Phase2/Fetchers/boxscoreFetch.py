@@ -66,4 +66,4 @@ def boxScore(Start_date, End_date):
         else:
             print("Failed to retrieve the webpage.")
 
-boxScore("03/12/2024","03/12/2024")
+boxScore("03/13/2024","03/13/2024")

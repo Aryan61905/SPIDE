@@ -58,7 +58,7 @@ def main(input,conn,cursor):
                         data_dict['stats'][data_dict['stats'].index(i)]= i[i.index('(')+1:i.index(')')]
                     
                 select_v = ', '.join(['\"{}\"'.format(item) if item[0].isdigit() else '{}'.format(item) for item in data_dict['stats']])
-                select_v += ', Opponent'
+                select_v += ', Opponent,Date'
                 db_data  = DatabaseApi.getBoxScoreStatsByDateRange(conn,cursor,select_v,'BoxScores',['Player','BoxScore_Type'],[player_key,gt],sd,ed,'DESC' if ed<sd else 'ASC')
                 num = len(db_data[0])-1
                 i=0
