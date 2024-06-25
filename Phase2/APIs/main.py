@@ -36,8 +36,64 @@ def main(input,conn,cursor):
         for player_key in data_dict['filter']['Player']:
             if player_key[1:] in teams:
                 data_dict['filter']['Team'].append(player_key)
-         
-        data_dict['filter']['Player'] = [val for val in data_dict['filter']['Player'] if val[1:] not in teams]        
+        
+        data_dict['filter']['Player'] = [val for val in data_dict['filter']['Player'] if val[1:] not in teams]   
+
+        def fetch_words_from_db():
+            
+            cursor.execute('SELECT Player FROM Players')
+            return [row[0] for row in cursor.fetchall()]
+
+        def levenshtein_distance(word1, word2):
+            
+            len1, len2 = len(word1), len(word2)
+            dp = [[0] * (len2 + 1) for _ in range(len1 + 1)]
+            
+            for i in range(len1 + 1):
+                dp[i][0] = i
+            for j in range(len2 + 1):
+                dp[0][j] = j
+                
+            for i in range(1, len1 + 1):
+                for j in range(1, len2 + 1):
+                    if word1[i - 1] == word2[j - 1]:
+                        dp[i][j] = dp[i - 1][j - 1]
+                    else:
+                        dp[i][j] = min(dp[i - 1][j] + 1,     # Deletion
+                                    dp[i][j - 1] + 1,     # Insertion
+                                    dp[i - 1][j - 1] + 1) # Substitution
+            return dp[len1][len2]
+
+        def find_best_match(word, word_list):
+            
+            best_match = None
+            min_distance = float('inf')
+            
+            for candidate in word_list:
+                distance = levenshtein_distance(word, candidate)
+                if distance < min_distance:
+                    min_distance = distance
+                    best_match = candidate
+                    
+            return best_match
+
+        def replace_incorrect_words(input_words, correct_words):
+            
+            corrected_words = []
+            for word in input_words:
+                if word in correct_words:
+                    corrected_words.append(word)
+                else:
+                    best_match = find_best_match(word, correct_words)
+                    corrected_words.append(best_match)
+            return corrected_words
+
+        
+        player_list_db = fetch_words_from_db()
+
+        
+        data_dict['filter']['Player'] = replace_incorrect_words(data_dict['filter']['Player'], player_list_db)
+        data_dict['player'] = replace_incorrect_words(data_dict['player'], player_list_db) 
 
     def getStatsByDateRange(sd,ed):
         ret=[]     
@@ -134,7 +190,8 @@ def main(input,conn,cursor):
                         data_dict['stats'][data_dict['stats'].index(i)]= i[i.index('(')+1:i.index(')')]
                     
                 select_v = ', '.join(['\"{}\"'.format(item) if item[0].isdigit() else '{}'.format(item) for item in data_dict['stats']])
-                select_v += ', Opponent,Token'
+                select_v += ',Opponent,Token'
+                
                 num = int(x[1:])-1
                 db_data  = DatabaseApi.getBoxScoreStats(conn,cursor,select_v,'BoxScores',['Player','BoxScore_Type'], [player_key,gt],num,'DESC' if x[0]=='L' else 'ASC')
                 c_db_data =db_data[:]
@@ -148,7 +205,14 @@ def main(input,conn,cursor):
                             select_v = 'PTS,Player,Opponent,MP,PTS,Date,Token'
                             
                             op_db_data = DatabaseApi.getBoxScoreStats(conn,cursor,select_v,'BoxScores',['Player','BoxScore_Type'], [op_player[1:],gt],num,'DESC')
-                            tokens = [tok[-1] for tok in op_db_data[0]]
+                            tokens = [tok[-1] for tok in op_db_data[0] if tok[0]!= None ]
+                            db_data[0] = [vals for vals in db_data[0] if vals[-1] in tokens and vals[0]!= None]
+                        
+                        if op_player[0]=='-':
+                            select_v = 'PTS,Player,Opponent,MP,PTS,Date,Token'
+                            
+                            op_db_data = DatabaseApi.getBoxScoreStats(conn,cursor,select_v,'BoxScores',['Player','BoxScore_Type'], [op_player[1:],gt],num,'DESC')
+                            tokens = [tok[-1] for tok in op_db_data[0] if tok[0]== None ]
                             db_data[0] = [vals for vals in db_data[0] if vals[-1] in tokens and vals[0]!= None]
 
                         if num >len(db_data[0])-1:
@@ -172,9 +236,9 @@ def main(input,conn,cursor):
                         
                         
                         for st in special['AVG']:
-                                special["AVG"][st]/= len(db_data[0]) - av
+                                special["AVG"][st]/= i
                         
-                        ret.append(Parser.parse_output(result,player_key,gt,x))
+                        ret.append(Parser.parse_output(result,player_key,gt,x,op_player))
                         ret.append(Parser.parse_output_special(special,player_key,gt,x))
                         result={}
                         for st in db_data[1]:
@@ -194,8 +258,14 @@ def main(input,conn,cursor):
                         if op_team[0]=='+':
                             
                             op_db_data  = DatabaseApi.getBoxScoreStats(conn,cursor,select_v,'BoxScores',['Player','BoxScore_Type','Opponent'], [player_key,gt,op_team[1:]],num,'DESC' if x[0]=='L' else 'ASC')
-                            tokens = [tok[-1] for tok in op_db_data[0]]
+                            tokens = [tok[-1] for tok in op_db_data[0] if tok[0]!= None ]
                             db_data[0] = [vals for vals in db_data[0] if vals[-1] in tokens and vals[0]!= None]
+                        
+                        elif op_team[0]=='-':
+                            op_db_data  = DatabaseApi.getBoxScoreStats(conn,cursor,select_v,'BoxScores',['Player','BoxScore_Type','Opponent'], [player_key,gt,op_team[1:]],num,'DESC' if x[0]=='L' else 'ASC')
+                            tokens = [tok[-1] for tok in op_db_data[0] if tok[0]== None ]
+                            db_data[0] = [vals for vals in db_data[0] if vals[-1] in tokens and vals[0]!= None]
+
                         if num >len(db_data[0])-1:
                             num = len(db_data[0])-1
                         i=0
@@ -217,9 +287,9 @@ def main(input,conn,cursor):
                         
                         
                         for st in special['AVG']:
-                                special["AVG"][st]/= len(db_data[0]) - av
+                                special["AVG"][st]/= i
                         
-                        ret.append(Parser.parse_output(result,player_key,gt,x))
+                        ret.append(Parser.parse_output(result,player_key,gt,x,op_team))
                         ret.append(Parser.parse_output_special(special,player_key,gt,x))
                         result={}
                         for st in db_data[1]:
@@ -230,7 +300,8 @@ def main(input,conn,cursor):
                         
                 
                 else:
-                    
+
+                    db_data[0] = [vals for vals in db_data[0] if vals[0]!= None]
                     
                     if num >len(db_data[0])-1:
                         num = len(db_data[0])-1
@@ -253,10 +324,11 @@ def main(input,conn,cursor):
                     
                     
                     for st in special['AVG']:
-                            special["AVG"][st]/= int(x[1:]) - av
+                            special["AVG"][st]/= i
                     
                     ret.append(Parser.parse_output(result,player_key,gt,x))
                     ret.append(Parser.parse_output_special(special,player_key,gt,x))
+                    #print(ret)
                     result={}
                     
                     data_dict['stats']=copy_stats
@@ -278,7 +350,7 @@ def main(input,conn,cursor):
                   }:
         ret_app.append(getAvgStats())
         
-    elif data_dict["filter"]['GameType']!=[] and data_dict["filter"]['XGames'] == [] and data_dict["filter"]['DateRange']==[] and data_dict["filter"]['Date'] == [] and data_dict["filter"]['PlayerOrTeam']==[]:
+    elif data_dict["filter"]['GameType']!=[] and data_dict["filter"]['XGames'] == [] and data_dict["filter"]['DateRange']==[] and data_dict["filter"]['Date'] == [] and data_dict["filter"]['Player']==[] and  data_dict["filter"]['Team']==[]:
         for gt in data_dict["filter"]['GameType']:
             ret_app.append(getAvgStats(gt))
         
@@ -313,6 +385,7 @@ def main(input,conn,cursor):
 #main("--player Nikola Jokić,Julius Randle, Jalen Brunson,Shai Gilgeous-Alexander,Anthony Davis, Kawhi Leonard,LeBron James --stats PTS,TRB,AST,boxscores_id,Token,Date --filter L10,G")
 #main("--player Devin Booker --stats 3P,3PA,boxscores_id,Token,Date --filter L6,H1, 01/10/2024->01/16/2024")
 #main("--player  Kevin Durant,Devin Booker,Anthony Davis,Domantas Sabonis,Giannis Antetokounmpo,Jayson Tatum,LeBron James, Stephen Curry, Jalen Brunson, Joel Embiid, Tyrese Haliburton --stats AVG(PTS),AVG(AST),AVG(TRB),AVG(PTS+TRB+AST>45),Date --filter L8,G")
-#conn,cursor= connect_to_database('Main')
 #main("--player Joel Embiid,Paul George,Jayson Tatum,Stephen Curry, Trae Young,Donovan Mitchell,Domantas Sabonis   --stats PTS,TRB,AST, AVG(PTS+TRB+AST),Date,MP --filter 01/01/2024->02/01/2024,G",conn,cursor)
-#main_ret
+
+conn,cursor= connect_to_database('Main')
+main("--player Lebron James --stats PTS --filter L5, G",conn, cursor)

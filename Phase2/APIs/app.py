@@ -23,6 +23,7 @@ def handle_command():
     
     res = response[0]
     data={}
+    #print(res)
     for r in res:
         for k in r.keys():
             if k in data:
@@ -43,5 +44,5 @@ def process_command(command):
 
 if __name__ == '__main__':
     app.run(debug=True,port=8000)
-    #process_command("--player Deandre Ayton, Richaun Holmes, Immanuel Quickley, Vasilije Micić, Gary Trent Jr., Charles Bassey, Josh Hart, Chris Boucher, Marcus Smart, Kelly Olynyk, Dalano Banton, Dejounte Murray, Brice Sensabaugh, James Wiseman, Jontay Porter, Jaylen Brown, Collin Gillespie, Damian Jones, Naz Reid, Nate Hinton, John Konchar, Simone Fontecchio, P.J. Tucker, Jock Landale, Paul Reed, Nickeil Alexander-Walker, Luke Kornet, Jalen McDaniels, Kevin Durant, GG Jackson II, Trayce Jackson-Davis, Luka Garza, Cam Thomas, Julian Champagnie, Kyle Kuzma, Gradey Dick, Corey Kispert, Grant Williams, Trey Jemison, Kelly Oubre Jr. --stats AVG(PTS),AVG(TRB),AVG(AST),AVG(PTS+TRB+AST),Team --filter G, L5")
+    #process_command("--player Anthony Davis --stats AVG(PTS),AVG(TRB),AVG(AST),AVG(PTS+TRB+AST),Team --filter G,L5,-LeBron James")
 

@@ -1,6 +1,7 @@
 from tabulate import tabulate
 import pandas as pd
 import matplotlib.pyplot as plt
+import copy
 
 def parse_input(input):
     input_list = input.split('--')
@@ -68,15 +69,15 @@ def parse_input(input):
 
     return input_dict
 
-def parse_output(output,player,GameType,XGames):
-    #print(output)
+def parse_output(output,player,GameType,XGames,filterPlayer=""):
+    print(filterPlayer)
     rows = list(output.keys())
     columns = list(output[rows[0]].keys())
     table_data = []
     for r in rows:
         row = [r]+[output[r][c] for c in columns]
         table_data.append(row)
-    headers = [player+" "+ XGames+ " in "+ GameType]+ columns
+    headers = [player+" "+ XGames+ " in "+ GameType+ " "+ filterPlayer]+ columns
     table  = tabulate(table_data,headers=headers,tablefmt='pretty')
     print(table)
     return {player:[headers]+table_data}
@@ -85,11 +86,9 @@ def parse_output(output,player,GameType,XGames):
 
 def parse_output_special(output,player,GameType,XGames):
     #print(output)
-    
-    for x in output:
-        
-        print(output[x])
-    return ({player:output})
+    print(output)
+    my_copy = copy.deepcopy(output)
+    return ({player:my_copy})
     
     
     

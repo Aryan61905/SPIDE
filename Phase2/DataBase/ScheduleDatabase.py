@@ -39,7 +39,7 @@ df["PTS"] = pd.to_numeric(df["PTS"], errors='coerce').astype(float)
 
 df["PTS.1"] = pd.to_numeric(df["PTS.1"], errors='coerce').astype(float)
 
-new_column_names=["Date",'Start (ET)', 'Away', 'Away_PTS', 'Home', 'Home_PTS', 'Winner', 'OT',"Attendance", "Arena", "Game_Type","Home_Token","Visitor_Token","Token"]
+new_column_names=["Date",'Start (ET)', 'Away', 'Away_PTS', 'Home', 'Home_PTS', 'Winner', 'OT',"Attendance","Game_Length", "Arena", "Game_Type","Home_Token","Visitor_Token","Token"]
 
 df.rename(columns=dict(zip(df.columns, new_column_names)), inplace=True)
 

@@ -180,8 +180,12 @@ function displayData(data) {
       const datasets = dataHistory[cardClassName.slice(0,-5)][0].slice(1).map((label, index) => ({
         label: label,
         data: data.map(row => row[index + 1]).reverse(),
+        fill: false,
         borderColor: '#' + (Math.random().toString(16) + '000000').substring(2, 8).toUpperCase(),
-        fill: false
+        backgroundColor: '#' + (Math.random().toString(16) + '000000').substring(2, 8).toUpperCase(),
+        
+        shadowBlur: 5, // Adjust blur amount (higher for more glow)
+        shadowColor: 'rgba(0, 0, 0, 0.5)', // Set shadow color with some transparency
     }));
 
     // Create a single chart with all datasets
@@ -218,8 +222,9 @@ function displayData(data) {
         type: 'line',
         data: {
             labels: xLabels,
-            datasets: datasets
+            datasets: datasets,
         },
+        
         options: {
             responsive: true,
             maintainAspectRatio: false,

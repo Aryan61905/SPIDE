@@ -10,7 +10,7 @@ import pandas as pd
 
 def Schedule():
     
-    for month in ["october","november","december","january","february","march","april"]:
+    for month in ["october","november","december","january","february","march","april","may","june"]:
         url = f"https://www.basketball-reference.com/leagues/NBA_2024_games-{month}.html"
         response = requests.get(url)
 
