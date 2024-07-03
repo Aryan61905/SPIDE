@@ -387,5 +387,5 @@ def main(input,conn,cursor):
 #main("--player  Kevin Durant,Devin Booker,Anthony Davis,Domantas Sabonis,Giannis Antetokounmpo,Jayson Tatum,LeBron James, Stephen Curry, Jalen Brunson, Joel Embiid, Tyrese Haliburton --stats AVG(PTS),AVG(AST),AVG(TRB),AVG(PTS+TRB+AST>45),Date --filter L8,G")
 #main("--player Joel Embiid,Paul George,Jayson Tatum,Stephen Curry, Trae Young,Donovan Mitchell,Domantas Sabonis   --stats PTS,TRB,AST, AVG(PTS+TRB+AST),Date,MP --filter 01/01/2024->02/01/2024,G",conn,cursor)
 
-conn,cursor= connect_to_database('Main')
-main("--player Lebron James --stats PTS --filter L5, G",conn, cursor)
+#conn,cursor= connect_to_database('Main')
+#main("--player Lebron James --stats PTS --filter L5, G",conn, cursor)

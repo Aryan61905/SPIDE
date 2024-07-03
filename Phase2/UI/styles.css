@@ -127,7 +127,7 @@ body {
   padding: 10px 20px;
 }
 
-#prompt {
+#prompt{
   color: #0ff;
   font-weight: bold;
   text-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff, 0 0 40px #0ff, 0 0 70px #0ff, 0 0 80px #0ff, 0 0 100px #0ff, 0 0 150px #0ff;
@@ -142,7 +142,17 @@ body {
   flex-grow: 1;
   margin-left: 10px;
 }
-
+#autocomplete-container
+{
+  color: #fff;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  font-family: 'Courier New', Courier, monospace;
+  margin-top: 10px;
+  cursor: pointer;
+  margin-left: 10px;
+}
 /* Table styling */
 .terminal-table {
   border-collapse: collapse;

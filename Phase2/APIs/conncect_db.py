@@ -2,7 +2,7 @@ import sqlite3
 
 
 db_ids= {
-    'Main':'/Users/roy/Desktop/SPIDE/Phase2/DataBase/NBA_Player_Database.db',
+    'Main':'/home/aryan61905/Desktop/SPIDE-develop/Phase2/DataBase/NBA_Player_Database.db',
     'BoxScores': '/Users/roy/Desktop/SPIDE/Phase2/DataBase/BoxScores_Database.db'
     }
 def connect_to_database(db_id):

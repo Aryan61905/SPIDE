@@ -64,10 +64,9 @@ def parse_input(input):
             if schedule:
                 input_dict['schedule'].extend([s.strip() for s in schedule.split(',')])
 
-        
-
-
     return input_dict
+
+
 
 def parse_output(output,player,GameType,XGames,filterPlayer=""):
     print(filterPlayer)
