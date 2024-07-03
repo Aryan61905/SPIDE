@@ -4,7 +4,82 @@ const commandHistory = document.getElementById('command-history');
 const homeMenu = document.getElementById('home-menu');
 const historyContainer = document.getElementById('history');
 const apiUrl = 'http://127.0.0.1:8000/api/terminal';
+const searchUrl = 'http://127.0.0.1:8000/api/prompt';
 var dataHistory ={};
+document.addEventListener('DOMContentLoaded', function() {
+  const inputField = document.getElementById('input');
+  const autocompleteContainer = document.getElementById('autocomplete-container');
+  
+  inputField.addEventListener('input', function(event) {
+    const inputValue = event.target.value.trim();
+    if (inputValue.startsWith('--player')) {
+      const searchTerm = inputValue.substring(9).trim(); // Remove '--player' and trim whitespace
+      fetchPlayerNames(searchTerm); // Function to fetch player names (can be AJAX call or predefined list)
+    } else {
+      clearAutocomplete();
+    }
+  });
+  
+  function fetchPlayerNames(searchTerm) {
+    // Replace this with your actual data fetching logic, like an AJAX call
+    {
+      
+      fetch(searchUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ searchTerm })
+      })
+        .then(response => response.json())
+        .then(data => {
+          const matchedPlayers = data
+          updateAutocomplete(matchedPlayers.slice(0, 5)); 
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          appendOutput(`<div>Error: ${error}</div>`); // Display error if any
+        });
+    }
+   // Limiting to 5 results
+  }
+  
+  function updateAutocomplete(playerList) {
+    autocompleteContainer.innerHTML = ''; // Clear previous autocomplete options
+    
+    playerList.forEach(player => {
+      const option = document.createElement('div');
+      option.textContent = player;
+      option.classList.add('autocomplete-option');
+      
+      // Click event to populate input field
+      option.addEventListener('click', function() {
+        inputField.value = `--player ${player}`;
+        clearAutocomplete();
+      });
+      
+      autocompleteContainer.appendChild(option);
+    });
+    
+    if (playerList.length > 0) {
+      autocompleteContainer.style.display = 'block'; // Show autocomplete options
+    } else {
+      autocompleteContainer.style.display = 'none'; // Hide if no options
+    }
+  }
+  
+  function clearAutocomplete() {
+    autocompleteContainer.innerHTML = '';
+    autocompleteContainer.style.display = 'none';
+  }
+  
+  // Hide autocomplete options when clicking outside the input field
+  document.addEventListener('click', function(event) {
+    if (!event.target.closest('#input-container')) {
+      clearAutocomplete();
+    }
+  });
+});
 
 function appendOutput(text) {
   terminal.innerHTML += `<div>${text}</div>`;
