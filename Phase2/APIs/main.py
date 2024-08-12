@@ -81,11 +81,11 @@ def main(input,conn,cursor):
             
             corrected_words = []
             for word in input_words:
-                if word in correct_words:
+                if word[0:] in correct_words:
                     corrected_words.append(word)
                 else:
-                    best_match = find_best_match(word, correct_words)
-                    corrected_words.append(best_match)
+                    best_match = find_best_match(word[0:], correct_words)
+                    corrected_words.append(word[0]+best_match)
             return corrected_words
 
         
@@ -212,8 +212,12 @@ def main(input,conn,cursor):
                             select_v = 'PTS,Player,Opponent,MP,PTS,Date,Token'
                             
                             op_db_data = DatabaseApi.getBoxScoreStats(conn,cursor,select_v,'BoxScores',['Player','BoxScore_Type'], [op_player[1:],gt],num,'DESC')
-                            tokens = [tok[-1] for tok in op_db_data[0] if tok[0]== None ]
-                            db_data[0] = [vals for vals in db_data[0] if vals[-1] in tokens and vals[0]!= None]
+                            tokens = [tok[-1] for tok in db_data[0] if tok[0]!= None ]
+                            op_tokens = [tok[-1] for tok in op_db_data[0] if tok[0]!= None ]
+                            #op_dnp_tokens = [tok[-1] for tok in op_db_data[0] if (tok[0]== None) ]
+                            diff = [item for item in tokens if item not in op_tokens]
+                            
+                            db_data[0] = [vals for vals in db_data[0] if vals[-1] in diff and vals[0]!= None]
 
                         if num >len(db_data[0])-1:
                             num = len(db_data[0])-1
