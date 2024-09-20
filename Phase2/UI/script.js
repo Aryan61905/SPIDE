@@ -12,10 +12,15 @@ document.addEventListener('DOMContentLoaded', function() {
   
   inputField.addEventListener('input', function(event) {
     const inputValue = event.target.value.trim();
-    if (inputValue.startsWith('--player')) {
+    if (inputValue.startsWith('--player') && !inputValue.includes('--stats')){
       const searchTerm = inputValue.substring(9).trim(); // Remove '--player' and trim whitespace
       fetchPlayerNames(searchTerm); // Function to fetch player names (can be AJAX call or predefined list)
-    } else {
+    } 
+    else if (inputValue.includes('--stats'))
+    {
+      updateAutocomplete(["PTS","AVG","TRB"]);
+    }
+    else {
       clearAutocomplete();
     }
   });
@@ -261,38 +266,30 @@ function displayData(data) {
         
         shadowBlur: 5, // Adjust blur amount (higher for more glow)
         shadowColor: 'rgba(0, 0, 0, 0.5)', // Set shadow color with some transparency
-    }));
-
+    })
+    );
+    
     // Create a single chart with all datasets
     const canvas = document.createElement('canvas');
+    const chartDiv = document.createElement('div');
+    chartDiv.setAttribute('id','chartDiv');
     canvas.setAttribute('id','canvas');
     
     let existingCanvas = cardDiv.querySelector('canvas');
 
-    // If an existing canvas is found, remove it
-    
-    const widthPercentage = 80; // 80% of cardDiv's width
-    const heightPercentage = 60; // 60% of cardDiv's height
-    const cardDivWidth = cardDiv.offsetWidth;
-    const cardDivHeight = cardDiv.offsetHeight;
-
-    const desiredWidth = (cardDivWidth * widthPercentage) / 100;
-    const desiredHeight = (cardDivHeight * heightPercentage) / 100;
-    console.log("Desired Width:", desiredWidth);
-    console.log("Desired Height:", desiredHeight);
-    
     if (existingCanvas) {
       existingCanvas.parentNode.removeChild(existingCanvas);
       rightSlider.innerHTML = "&nbsp;&#x25BC;";
+      
     }
     else
     {
-    cardDiv.appendChild(canvas);
+    chartDiv.appendChild(canvas);
+    cardDiv.appendChild(chartDiv);
     rightSlider.innerHTML = "&nbsp;&#x25B2;";
     
     } // Appending canvas to body
-    console.log("Canvas Width after setting:", canvas.width);
-    console.log("Canvas Height after setting:", canvas.height); 
+    
     new Chart(canvas.getContext('2d'), {
         type: 'line',
         data: {
@@ -320,10 +317,9 @@ function displayData(data) {
                 }
             }
         }
-    });
-    canvas.style.width = desiredWidth + 'px';
-    canvas.style.height = desiredHeight + 'px';
-    
+    }
+    );
+
     });
   }
   

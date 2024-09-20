@@ -84,5 +84,5 @@ def process_command(command):
 
 if __name__ == '__main__':
     app.run(debug=True,port=8000)
-    #process_command("--player Anthony Davis --stats AVG(PTS),AVG(TRB),AVG(AST),AVG(PTS+TRB+AST),Team --filter G,L5,-LeBron James")
+    #process_command("--player Giannis Antetokounmpo --stats AVG(PTS),AVG(TRB),AVG(AST),AVG(PTS+TRB+AST),Team --filter G,L5, -Damian Lilard")
 

@@ -81,7 +81,7 @@ def parse_output(output,player,GameType,XGames,filterPlayer=""):
     print(table)
     return {player:[headers]+table_data}
     
-    
+
 
 def parse_output_special(output,player,GameType,XGames):
     #print(output)

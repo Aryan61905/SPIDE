@@ -187,6 +187,7 @@ body {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   padding: 20px;
   width: 98%;
+  
   margin-top: 1%;
   flex-wrap: wrap; 
   align-items: center;
@@ -197,8 +198,17 @@ body {
   margin-bottom: 10px;
   border-collapse: collapse;
 }
-
-
+#chartDiv{
+  background-color: #fff;
+  height: min-content;
+  width: 95%;
+}
+#canvas
+{ position: relative;
+  width: 90%;
+  height: 50%;
+  margin-bottom: 10px;
+}
 .card th,
 .card td {
   border: 1px solid #0ff;
